@@ -6,7 +6,6 @@ public record UserProfileResponse(
         Long id,
         String email,
         String name,
-        String profileImageUrl,
         String provider
 ) {
     public static UserProfileResponse from(User user) {
@@ -14,7 +13,6 @@ public record UserProfileResponse(
                 user.getId(),
                 user.getEmail(),
                 user.getName(),
-                user.getProfileImageUrl(),
                 user.getProvider().name()
         );
     }

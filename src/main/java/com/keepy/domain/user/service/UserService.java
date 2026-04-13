@@ -25,7 +25,7 @@ public class UserService {
     @Transactional
     public UserProfileResponse updateProfile(Long userId, UserProfileUpdateRequest request) {
         User user = findUser(userId);
-        user.updateProfile(request.name(), request.profileImageUrl());
+        user.updateProfile(request.name());
         return UserProfileResponse.from(user);
     }
 

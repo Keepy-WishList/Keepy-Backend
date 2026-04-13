@@ -1,31 +1,27 @@
 package com.keepy.domain.item.entity;
 
-import com.keepy.domain.user.entity.User;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "items")
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class Item {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(nullable = false)
+    private Long userId;
 
     @Column(nullable = false)
     private String productName;
@@ -39,10 +35,8 @@ public class Item {
 
     private String currency;
 
-    // 분석된 제품 이미지 URL (S3)
     private String imageUrl;
 
-    // 사용자가 올린 원본 스크린샷 URL (S3)
     private String screenshotUrl;
 
     @Column(length = 1000)
@@ -52,12 +46,7 @@ public class Item {
     private String memo;
 
     @Column(nullable = false)
-    @Builder.Default
-    private Boolean isPurchased = false;
-
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<ShoppingOption> shoppingOptions = new ArrayList<>();
+    private Boolean isPurchased;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -65,15 +54,34 @@ public class Item {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    private Item(Long userId, String productName, String brand, Category category,
+                 BigDecimal price, String currency, String imageUrl, String screenshotUrl,
+                 String description, String memo) {
+        this.userId = userId;
+        this.productName = productName;
+        this.brand = brand;
+        this.category = category;
+        this.price = price;
+        this.currency = currency;
+        this.imageUrl = imageUrl;
+        this.screenshotUrl = screenshotUrl;
+        this.description = description;
+        this.memo = memo;
+        this.isPurchased = false;
+    }
+
+    public static Item of(Long userId, String productName, String brand, Category category,
+                          BigDecimal price, String currency, String imageUrl, String screenshotUrl,
+                          String description, String memo) {
+        return new Item(userId, productName, brand, category, price, currency,
+                imageUrl, screenshotUrl, description, memo);
+    }
+
     public void updateMemo(String memo) {
         this.memo = memo;
     }
 
     public void togglePurchased() {
         this.isPurchased = !this.isPurchased;
-    }
-
-    public void addShoppingOption(ShoppingOption option) {
-        shoppingOptions.add(option);
     }
 }

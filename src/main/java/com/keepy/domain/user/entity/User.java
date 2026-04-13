@@ -1,7 +1,9 @@
 package com.keepy.domain.user.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -10,9 +12,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "users")
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class User {
 
     @Id
@@ -27,8 +27,6 @@ public class User {
     @Column(nullable = false)
     private String name;
 
-    private String profileImageUrl;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AuthProvider provider;
@@ -41,8 +39,19 @@ public class User {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    public void updateProfile(String name, String profileImageUrl) {
+    private User(String email, String password, String name, AuthProvider provider, String providerId) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.provider = provider;
+        this.providerId = providerId;
+    }
+
+    public static User of(String email, String password, String name, AuthProvider provider, String providerId) {
+        return new User(email, password, name, provider, providerId);
+    }
+
+    public void updateProfile(String name) {
         if (name != null) this.name = name;
-        if (profileImageUrl != null) this.profileImageUrl = profileImageUrl;
     }
 }

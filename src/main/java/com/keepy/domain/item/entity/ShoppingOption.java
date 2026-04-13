@@ -1,25 +1,24 @@
 package com.keepy.domain.item.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "shopping_options")
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class ShoppingOption {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id", nullable = false)
-    private Item item;
+    @Column(nullable = false)
+    private Long itemId;
 
     @Column(nullable = false)
     private String siteName;
@@ -34,4 +33,20 @@ public class ShoppingOption {
     private Integer deliveryDays;
 
     private String deliveryFee;
+
+    private ShoppingOption(Long itemId, String siteName, String siteUrl, BigDecimal price,
+                           String currency, Integer deliveryDays, String deliveryFee) {
+        this.itemId = itemId;
+        this.siteName = siteName;
+        this.siteUrl = siteUrl;
+        this.price = price;
+        this.currency = currency;
+        this.deliveryDays = deliveryDays;
+        this.deliveryFee = deliveryFee;
+    }
+
+    public static ShoppingOption of(Long itemId, String siteName, String siteUrl, BigDecimal price,
+                                    String currency, Integer deliveryDays, String deliveryFee) {
+        return new ShoppingOption(itemId, siteName, siteUrl, price, currency, deliveryDays, deliveryFee);
+    }
 }

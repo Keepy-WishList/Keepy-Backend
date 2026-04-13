@@ -5,8 +5,7 @@ import com.keepy.domain.item.entity.Category;
 import com.keepy.domain.item.entity.Item;
 import com.keepy.domain.item.entity.ShoppingOption;
 import com.keepy.domain.item.repository.ItemRepository;
-import com.keepy.domain.user.entity.User;
-import com.keepy.domain.user.repository.UserRepository;
+import com.keepy.domain.item.repository.ShoppingOptionRepository;
 import com.keepy.global.exception.CustomException;
 import com.keepy.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -25,80 +24,89 @@ import java.util.List;
 public class ItemService {
 
     private final ItemRepository itemRepository;
-    private final UserRepository userRepository;
+    private final ShoppingOptionRepository shoppingOptionRepository;
 
     @Transactional
     public ItemDetailResponse save(Long userId, ItemSaveRequest request) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        Item item = Item.of(
+                userId,
+                request.productName(),
+                request.brand(),
+                request.category(),
+                request.price(),
+                request.currency(),
+                request.imageUrl(),
+                request.screenshotUrl(),
+                request.description(),
+                request.memo()
+        );
+        itemRepository.save(item);
 
-        Item item = Item.builder()
-                .user(user)
-                .productName(request.productName())
-                .brand(request.brand())
-                .category(request.category())
-                .price(request.price())
-                .currency(request.currency())
-                .imageUrl(request.imageUrl())
-                .screenshotUrl(request.screenshotUrl())
-                .description(request.description())
-                .memo(request.memo())
-                .build();
-
+        List<ShoppingOption> options = List.of();
         if (request.shoppingOptions() != null) {
-            request.shoppingOptions().forEach(opt -> {
-                ShoppingOption option = ShoppingOption.builder()
-                        .item(item)
-                        .siteName(opt.siteName())
-                        .siteUrl(opt.siteUrl())
-                        .price(opt.price())
-                        .currency(opt.currency())
-                        .deliveryDays(opt.deliveryDays())
-                        .deliveryFee(opt.deliveryFee())
-                        .build();
-                item.addShoppingOption(option);
-            });
+            options = request.shoppingOptions().stream()
+                    .map(opt -> ShoppingOption.of(
+                            item.getId(),
+                            opt.siteName(),
+                            opt.siteUrl(),
+                            opt.price(),
+                            opt.currency(),
+                            opt.deliveryDays(),
+                            opt.deliveryFee()
+                    ))
+                    .map(shoppingOptionRepository::save)
+                    .toList();
         }
 
-        return ItemDetailResponse.from(itemRepository.save(item));
+        return ItemDetailResponse.from(item, options);
     }
 
     @Transactional(readOnly = true)
     public Page<ItemListResponse> getMyItems(Long userId, String categoryStr, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 
+        Page<Item> items;
         if (categoryStr != null && !categoryStr.isBlank()) {
             Category category = Category.valueOf(categoryStr.toUpperCase());
-            return itemRepository.findByUserIdAndCategoryOrderByCreatedAtDesc(userId, category, pageable)
-                    .map(ItemListResponse::from);
+            items = itemRepository.findByUserIdAndCategoryOrderByCreatedAtDesc(userId, category, pageable);
+        } else {
+            items = itemRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable);
         }
-        return itemRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable)
-                .map(ItemListResponse::from);
+
+        return items.map(item -> {
+            List<ShoppingOption> options = shoppingOptionRepository.findByItemId(item.getId());
+            String bestSiteName = options.isEmpty() ? null : options.getFirst().getSiteName();
+            return ItemListResponse.from(item, bestSiteName);
+        });
     }
 
     @Transactional(readOnly = true)
     public ItemDetailResponse getItem(Long userId, Long itemId) {
         Item item = findItemWithOwnerCheck(userId, itemId);
-        return ItemDetailResponse.from(item);
+        List<ShoppingOption> options = shoppingOptionRepository.findByItemId(itemId);
+        return ItemDetailResponse.from(item, options);
     }
 
     @Transactional
     public ItemDetailResponse updateMemo(Long userId, Long itemId, MemoUpdateRequest request) {
         Item item = findItemWithOwnerCheck(userId, itemId);
         item.updateMemo(request.memo());
-        return ItemDetailResponse.from(item);
+        List<ShoppingOption> options = shoppingOptionRepository.findByItemId(itemId);
+        return ItemDetailResponse.from(item, options);
     }
 
     @Transactional
     public ItemDetailResponse togglePurchased(Long userId, Long itemId) {
         Item item = findItemWithOwnerCheck(userId, itemId);
         item.togglePurchased();
-        return ItemDetailResponse.from(item);
+        List<ShoppingOption> options = shoppingOptionRepository.findByItemId(itemId);
+        return ItemDetailResponse.from(item, options);
     }
 
     @Transactional
     public void deleteItem(Long userId, Long itemId) {
         Item item = findItemWithOwnerCheck(userId, itemId);
+        shoppingOptionRepository.deleteAll(shoppingOptionRepository.findByItemId(itemId));
         itemRepository.delete(item);
     }
 
@@ -119,13 +127,17 @@ public class ItemService {
         Pageable pageable = PageRequest.of(page, size, sortOrder);
 
         return itemRepository.search(userId, keyword, category, minPrice, maxPrice, pageable)
-                .map(ItemListResponse::from);
+                .map(item -> {
+                    List<ShoppingOption> options = shoppingOptionRepository.findByItemId(item.getId());
+                    String bestSiteName = options.isEmpty() ? null : options.getFirst().getSiteName();
+                    return ItemListResponse.from(item, bestSiteName);
+                });
     }
 
     private Item findItemWithOwnerCheck(Long userId, Long itemId) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
-        if (!item.getUser().getId().equals(userId)) {
+        if (!item.getUserId().equals(userId)) {
             throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
         }
         return item;

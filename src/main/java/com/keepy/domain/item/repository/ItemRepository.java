@@ -20,7 +20,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     // 검색 + 필터링
     @Query("""
             SELECT i FROM Item i
-            WHERE i.user.id = :userId
+            WHERE i.userId = :userId
               AND (:keyword IS NULL OR LOWER(i.productName) LIKE LOWER(CONCAT('%', :keyword, '%'))
                    OR LOWER(i.brand) LIKE LOWER(CONCAT('%', :keyword, '%')))
               AND (:category IS NULL OR i.category = :category)

@@ -1,6 +1,7 @@
 package com.keepy.domain.item.dto;
 
 import com.keepy.domain.item.entity.Item;
+import com.keepy.domain.item.entity.ShoppingOption;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -21,7 +22,7 @@ public record ItemDetailResponse(
         List<ShoppingOptionDto> shoppingOptions,
         LocalDateTime createdAt
 ) {
-    public static ItemDetailResponse from(Item item) {
+    public static ItemDetailResponse from(Item item, List<ShoppingOption> shoppingOptions) {
         return new ItemDetailResponse(
                 item.getId(),
                 item.getProductName(),
@@ -34,7 +35,7 @@ public record ItemDetailResponse(
                 item.getDescription(),
                 item.getMemo(),
                 item.getIsPurchased(),
-                item.getShoppingOptions().stream()
+                shoppingOptions.stream()
                         .map(ShoppingOptionDto::from)
                         .toList(),
                 item.getCreatedAt()

@@ -38,12 +38,13 @@ public class AuthService {
             throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
         }
 
-        User user = User.builder()
-                .email(request.email())
-                .password(passwordEncoder.encode(request.password()))
-                .name(request.name())
-                .provider(AuthProvider.LOCAL)
-                .build();
+        User user = User.of(
+                request.email(),
+                passwordEncoder.encode(request.password()),
+                request.name(),
+                AuthProvider.LOCAL,
+                null
+        );
 
         userRepository.save(user);
         return issueTokens(user.getId());
@@ -95,11 +96,7 @@ public class AuthService {
         refreshTokenRepository.findByUserId(userId).ifPresentOrElse(
                 token -> token.update(refreshToken, expiresAt),
                 () -> refreshTokenRepository.save(
-                        RefreshToken.builder()
-                                .userId(userId)
-                                .token(refreshToken)
-                                .expiresAt(expiresAt)
-                                .build()
+                        RefreshToken.of(userId, refreshToken, expiresAt)
                 )
         );
 

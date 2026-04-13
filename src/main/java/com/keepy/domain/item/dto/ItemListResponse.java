@@ -17,11 +17,7 @@ public record ItemListResponse(
         String bestSiteName,
         LocalDateTime createdAt
 ) {
-    public static ItemListResponse from(Item item) {
-        String bestSiteName = item.getShoppingOptions().isEmpty()
-                ? null
-                : item.getShoppingOptions().getFirst().getSiteName();
-
+    public static ItemListResponse from(Item item, String bestSiteName) {
         return new ItemListResponse(
                 item.getId(),
                 item.getProductName(),

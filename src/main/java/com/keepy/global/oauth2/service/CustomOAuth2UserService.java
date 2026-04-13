@@ -31,22 +31,15 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         String email = (String) attributes.get("email");
         String name = (String) attributes.get("name");
-        String picture = (String) attributes.get("picture");
         String providerId = (String) attributes.get("sub");
 
         User user = userRepository.findByEmail(email)
                 .map(existing -> {
-                    existing.updateProfile(name, picture);
+                    existing.updateProfile(name);
                     return existing;
                 })
                 .orElseGet(() -> userRepository.save(
-                        User.builder()
-                                .email(email)
-                                .name(name)
-                                .profileImageUrl(picture)
-                                .provider(provider)
-                                .providerId(providerId)
-                                .build()
+                        User.of(email, null, name, provider, providerId)
                 ));
 
         return new CustomOAuth2UserPrincipal(user.getId(), attributes);
