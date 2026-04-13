@@ -20,7 +20,7 @@ import java.math.BigDecimal;
 @RestController
 @RequestMapping("/api/items")
 @RequiredArgsConstructor
-public class ItemController {
+public class ItemController implements ItemApiSpecification {
 
     private final ItemService itemService;
 

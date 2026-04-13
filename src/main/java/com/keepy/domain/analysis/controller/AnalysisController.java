@@ -15,7 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/analysis")
 @RequiredArgsConstructor
-public class AnalysisController {
+public class AnalysisController implements AnalysisApiSpecification {
 
     private final AnalysisService analysisService;
 
