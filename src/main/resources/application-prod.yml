@@ -51,13 +51,14 @@ openai:
   api-url: https://api.openai.com/v1/chat/completions
   model: gpt-4o
 
-aws:
-  s3:
-    bucket: ${S3_BUCKET_NAME}
-    region: ${AWS_REGION}
-  credentials:
-    access-key: ${AWS_ACCESS_KEY}
-    secret-key: ${AWS_SECRET_KEY}
+gcp:
+  project-id: ${GCP_PROJECT_ID}
+  storage:
+    bucket: ${GCS_BUCKET_NAME}
+
+app:
+  cookie:
+    secure: true
 
 logging:
   level:

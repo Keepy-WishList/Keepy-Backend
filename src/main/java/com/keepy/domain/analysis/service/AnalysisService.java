@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.keepy.domain.analysis.dto.AnalysisResponse;
 import com.keepy.global.exception.CustomException;
 import com.keepy.global.exception.ErrorCode;
-import com.keepy.infra.s3.S3Service;
+import com.keepy.infra.gcs.GcsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +24,7 @@ import java.util.Map;
 public class AnalysisService {
 
     private final RestClient openAiRestClient;
-    private final S3Service s3Service;
+    private final GcsService gcsService;
     private final ObjectMapper objectMapper;
 
     @Value("${openai.model}")
@@ -62,7 +62,7 @@ public class AnalysisService {
         validateImage(image);
 
         // S3에 스크린샷 업로드
-        String screenshotUrl = s3Service.upload(image, "screenshots");
+        String screenshotUrl = gcsService.upload(image, "screenshots");
 
         // 이미지를 base64로 인코딩
         String base64Image = encodeImageToBase64(image);
