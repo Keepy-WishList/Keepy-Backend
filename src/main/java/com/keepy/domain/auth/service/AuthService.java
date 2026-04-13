@@ -84,7 +84,8 @@ public class AuthService {
         refreshTokenRepository.deleteByUserId(userId);
     }
 
-    private TokenResponse issueTokens(Long userId) {
+    @Transactional
+    public TokenResponse issueTokens(Long userId) {
         String accessToken = jwtTokenProvider.createAccessToken(userId);
         String refreshToken = jwtTokenProvider.createRefreshToken(userId);
 
