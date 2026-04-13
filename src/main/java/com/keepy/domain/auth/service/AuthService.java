@@ -2,7 +2,6 @@ package com.keepy.domain.auth.service;
 
 import com.keepy.domain.auth.dto.LoginRequest;
 import com.keepy.domain.auth.dto.SignupRequest;
-import com.keepy.domain.auth.dto.TokenRefreshRequest;
 import com.keepy.domain.auth.dto.TokenResponse;
 import com.keepy.domain.auth.entity.RefreshToken;
 import com.keepy.domain.auth.repository.RefreshTokenRepository;
@@ -64,12 +63,12 @@ public class AuthService {
     }
 
     @Transactional
-    public TokenResponse refresh(TokenRefreshRequest request) {
-        if (!jwtTokenProvider.validateToken(request.refreshToken())) {
+    public TokenResponse refresh(String refreshToken) {
+        if (!jwtTokenProvider.validateToken(refreshToken)) {
             throw new CustomException(ErrorCode.INVALID_TOKEN);
         }
 
-        RefreshToken saved = refreshTokenRepository.findByToken(request.refreshToken())
+        RefreshToken saved = refreshTokenRepository.findByToken(refreshToken)
                 .orElseThrow(() -> new CustomException(ErrorCode.REFRESH_TOKEN_NOT_FOUND));
 
         if (saved.isExpired()) {

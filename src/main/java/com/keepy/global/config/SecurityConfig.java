@@ -7,6 +7,7 @@ import com.keepy.global.oauth2.service.CustomOAuth2UserService;
 import com.keepy.global.security.CustomUserDetailsService;
 import com.keepy.global.security.JwtAuthenticationFilter;
 import com.keepy.global.security.JwtTokenProvider;
+import com.keepy.global.security.TokenCookieHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +27,7 @@ public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final CustomUserDetailsService userDetailsService;
+    private final TokenCookieHelper tokenCookieHelper;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2AuthenticationSuccessHandler oAuth2SuccessHandler;
     private final OAuth2AuthenticationFailureHandler oAuth2FailureHandler;
@@ -38,7 +40,12 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/oauth2/**", "/login/oauth2/**").permitAll()
+                        .requestMatchers(
+                                "/api/auth/**",
+                                "/oauth2/**", "/login/oauth2/**",
+                                "/swagger-ui/**", "/swagger-ui.html",
+                                "/v3/api-docs/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
@@ -50,7 +57,7 @@ public class SecurityConfig {
                         .failureHandler(oAuth2FailureHandler)
                 )
                 .addFilterBefore(
-                        new JwtAuthenticationFilter(jwtTokenProvider, userDetailsService),
+                        new JwtAuthenticationFilter(jwtTokenProvider, userDetailsService, tokenCookieHelper),
                         UsernamePasswordAuthenticationFilter.class
                 );
 
