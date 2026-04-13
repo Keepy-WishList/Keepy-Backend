@@ -55,7 +55,7 @@ public class AnalysisService {
 
             Find this product on at least 3 major Korean shopping sites (쿠팡, 네이버쇼핑, 11번가, 지마켓) and/or international sites if relevant.
             If you cannot identify the product clearly, make your best estimate.
-            Return ONLY the JSON object, no additional text.
+            CRITICAL: Return ONLY the raw JSON object. Do NOT wrap it in markdown code blocks. Do NOT add any explanation before or after. Your entire response must be valid JSON starting with { and ending with }.
             """;
 
     public AnalysisResponse analyze(MultipartFile image) {
@@ -125,8 +125,7 @@ public class AnalysisService {
                                 )
                         )
                 ),
-                "max_tokens", 1500,
-                "response_format", Map.of("type", "json_object")
+                "max_tokens", 1500
         );
 
         try {

@@ -64,6 +64,6 @@ jobs:
             APPLE_CLIENT_ID=${{ secrets.APPLE_CLIENT_ID }}
             APPLE_CLIENT_SECRET=${{ secrets.APPLE_CLIENT_SECRET }}
             JWT_SECRET=${{ secrets.JWT_SECRET }}
-            OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
+            MINDLOGIC_API_KEY=${{ secrets.MINDLOGIC_API_KEY }}
             GCP_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }}
             GCS_BUCKET_NAME=${{ secrets.GCS_BUCKET_NAME }}

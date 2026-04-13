@@ -47,9 +47,9 @@ jwt:
   refresh-token-validity-in-seconds: 604800000
 
 openai:
-  api-key: ${OPENAI_API_KEY}
-  api-url: https://api.openai.com/v1/chat/completions
-  model: gpt-4o
+  api-key: ${MINDLOGIC_API_KEY}
+  api-url: https://factchat-cloud.mindlogic.ai/v1/gateway/chat/completions/
+  model: claude-sonnet-4-6
 
 gcp:
   project-id: ${GCP_PROJECT_ID}
