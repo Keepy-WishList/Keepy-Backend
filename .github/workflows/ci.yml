@@ -8,20 +8,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: keepy
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -42,9 +28,9 @@ jobs:
       - name: Test
         env:
           SPRING_PROFILES_ACTIVE: prod
-          MYSQL_URL: jdbc:mysql://localhost:3306/keepy
-          MYSQL_USERNAME: root
-          MYSQL_PASSWORD: root
+          MYSQL_URL: ${{ secrets.MYSQL_URL }}
+          MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           APPLE_CLIENT_ID: ${{ secrets.APPLE_CLIENT_ID }}
