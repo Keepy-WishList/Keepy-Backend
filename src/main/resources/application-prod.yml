@@ -32,7 +32,16 @@ spring:
           apple:
             client-id: ${APPLE_CLIENT_ID}
             client-secret: ${APPLE_CLIENT_SECRET}
+            client-authentication-method: private_key_jwt
+            authorization-grant-type: authorization_code
             scope: email, name
+            provider: apple
+        provider:
+          apple:
+            authorization-uri: https://appleid.apple.com/auth/authorize
+            token-uri: https://appleid.apple.com/auth/token
+            jwk-set-uri: https://appleid.apple.com/auth/keys
+            user-name-attribute: sub
 
   servlet:
     multipart:
