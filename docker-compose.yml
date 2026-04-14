@@ -1,5 +1,6 @@
 services:
   mysql:
+    container_name: keepy-mysql
     image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
@@ -15,6 +16,7 @@ services:
       retries: 5
 
   app:
+    container_name: keepy
     image: asia-northeast3-docker.pkg.dev/keepy-493212/keepy/keepy-backend:latest
     ports:
       - "8080:8080"
