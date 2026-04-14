@@ -51,15 +51,25 @@ jobs:
           docker push ${{ env.IMAGE }}:${{ github.sha }}
           docker push ${{ env.IMAGE }}:latest
 
-      - name: Deploy to Cloud Run
-        uses: google-github-actions/deploy-cloudrun@v2
+      - name: Copy docker-compose.yml to VM
+        uses: appleboy/scp-action@v0.1.7
         with:
-          service: keepy-backend
-          region: ${{ secrets.GCP_REGION }}
-          image: ${{ env.IMAGE }}:${{ github.sha }}
-          env_vars: |
-            SPRING_PROFILES_ACTIVE=prod
-            MYSQL_URL=${{ secrets.MYSQL_URL }}
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          source: docker-compose.yml
+          target: ~/keepy
+
+      - name: Deploy to VM
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          script: |
+            mkdir -p ~/keepy
+
+            cat > ~/keepy/.env << 'ENVEOF'
             MYSQL_USERNAME=${{ secrets.MYSQL_USERNAME }}
             MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
             GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
@@ -70,3 +80,10 @@ jobs:
             MINDLOGIC_API_KEY=${{ secrets.MINDLOGIC_API_KEY }}
             GCP_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }}
             GCS_BUCKET_NAME=${{ secrets.GCS_BUCKET_NAME }}
+            ENVEOF
+
+            echo '${{ secrets.GCP_SA_KEY }}' | docker login -u _json_key --password-stdin asia-northeast3-docker.pkg.dev
+
+            cp ~/keepy/.env .
+            docker compose -f ~/keepy/docker-compose.yml pull app
+            docker compose -f ~/keepy/docker-compose.yml up -d
