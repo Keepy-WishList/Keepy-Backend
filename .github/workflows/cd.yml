@@ -84,6 +84,8 @@ jobs:
 
             echo '${{ secrets.GCP_SA_KEY }}' | docker login -u _json_key --password-stdin asia-northeast3-docker.pkg.dev
 
+            docker system prune -af
+
             cp ~/keepy/.env .
             docker compose -f ~/keepy/docker-compose.yml pull app
             docker compose -f ~/keepy/docker-compose.yml up -d
