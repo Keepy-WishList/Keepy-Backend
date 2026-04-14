@@ -25,6 +25,9 @@ Thumbs.db
 ### Spring Boot ###
 application.yml
 
+### Claude Code ###
+.claude/
+
 ### Others ###
 bin/
 HELP.md
