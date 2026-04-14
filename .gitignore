@@ -24,7 +24,6 @@ Thumbs.db
 
 ### Spring Boot ###
 application.yml
-applicaiton-prod.yml
 
 ### Claude Code ###
 .claude/
