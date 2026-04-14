@@ -40,6 +40,9 @@ jobs:
       - name: Configure Docker for Artifact Registry
         run: gcloud auth configure-docker ${{ secrets.GCP_REGION }}-docker.pkg.dev --quiet
 
+      - name: Lowercase image name
+        run: echo "IMAGE=${IMAGE,,}" >> $GITHUB_ENV
+
       - name: Build Docker image
         run: docker build -t ${{ env.IMAGE }}:${{ github.sha }} -t ${{ env.IMAGE }}:latest .
 
