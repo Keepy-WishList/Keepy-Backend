@@ -41,7 +41,7 @@ public class SwaggerConfig {
     private List<Server> servers() {
         if ("prod".equals(activeProfile)) {
             return List.of(
-                    new Server().url("https://api.keepy.com").description("Production")
+                    new Server().url("https://34.50.0.32.nip.io").description("Production")
             );
         }
         return List.of(
