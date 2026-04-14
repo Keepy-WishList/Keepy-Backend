@@ -21,6 +21,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Configuration
@@ -41,6 +42,10 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((request, response, authException) ->
+                                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized"))
+                )
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
