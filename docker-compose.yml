@@ -33,6 +33,7 @@ services:
       MINDLOGIC_API_KEY: ${MINDLOGIC_API_KEY}
       GCP_PROJECT_ID: ${GCP_PROJECT_ID}
       GCS_BUCKET_NAME: ${GCS_BUCKET_NAME}
+      SERVER_DOMAIN: ${SERVER_DOMAIN}
     depends_on:
       mysql:
         condition: service_healthy

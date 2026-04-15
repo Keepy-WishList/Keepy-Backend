@@ -34,7 +34,7 @@ spring:
             client-secret: ${APPLE_CLIENT_SECRET}
             client-authentication-method: private_key_jwt
             authorization-grant-type: authorization_code
-            redirect-uri: "{baseUrl}/login/oauth2/code/apple"
+            redirect-uri: "${SERVER_DOMAIN}/login/oauth2/code/apple"
             scope: email, name
             provider: apple
         provider:
@@ -49,6 +49,9 @@ spring:
       enabled: true
       max-file-size: 10MB
       max-request-size: 10MB
+
+server:
+  forward-headers-strategy: framework
 
 jwt:
   key: ${JWT_SECRET}
