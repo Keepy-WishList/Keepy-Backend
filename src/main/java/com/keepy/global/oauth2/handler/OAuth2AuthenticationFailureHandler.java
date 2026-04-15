@@ -15,7 +15,7 @@ public class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationF
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
                                         AuthenticationException exception) throws IOException {
-        String redirectUri = UriComponentsBuilder.fromUriString("keepy://auth/callback")
+        String redirectUri = UriComponentsBuilder.fromUriString("http://localhost:3000/auth/callback")
                 .queryParam("error", exception.getMessage())
                 .build().toUriString();
 

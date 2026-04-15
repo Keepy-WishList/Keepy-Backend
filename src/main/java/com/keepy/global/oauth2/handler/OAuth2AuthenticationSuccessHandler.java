@@ -27,6 +27,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         TokenResponse tokens = authService.issueTokens(principal.getUserId());
 
         tokenCookieHelper.setTokenCookies(response, tokens);
-        getRedirectStrategy().sendRedirect(request, response, "keepy://auth/callback");
+        getRedirectStrategy().sendRedirect(request, response, "http://localhost:3000/auth/callback");
     }
 }
