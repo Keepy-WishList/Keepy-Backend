@@ -19,7 +19,7 @@ public class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationF
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
                                         AuthenticationException exception) throws IOException {
-        String redirectUri = UriComponentsBuilder.fromUriString(frontendUrl + "/auth/callback")
+        String redirectUri = UriComponentsBuilder.fromUriString(frontendUrl)
                 .queryParam("error", exception.getMessage())
                 .build().toUriString();
 
