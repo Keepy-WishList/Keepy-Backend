@@ -39,7 +39,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     return existing;
                 })
                 .orElseGet(() -> userRepository.save(
-                        User.of(email, null, name, provider, providerId)
+                        User.of(email, name, provider, providerId)
                 ));
 
         return new CustomOAuth2UserPrincipal(user.getId(), attributes);

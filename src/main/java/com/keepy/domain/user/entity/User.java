@@ -22,8 +22,6 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
-    private String password;
-
     @Column(nullable = false)
     private String name;
 
@@ -39,16 +37,15 @@ public class User {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    private User(String email, String password, String name, AuthProvider provider, String providerId) {
+    private User(String email, String name, AuthProvider provider, String providerId) {
         this.email = email;
-        this.password = password;
         this.name = name;
         this.provider = provider;
         this.providerId = providerId;
     }
 
-    public static User of(String email, String password, String name, AuthProvider provider, String providerId) {
-        return new User(email, password, name, provider, providerId);
+    public static User of(String email, String name, AuthProvider provider, String providerId) {
+        return new User(email, name, provider, providerId);
     }
 
     public void updateProfile(String name) {
