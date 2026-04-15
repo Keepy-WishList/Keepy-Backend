@@ -23,13 +23,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        tokenCookieHelper.resolveAccessToken(request)
+        resolveToken(request)
                 .filter(jwtTokenProvider::validateToken)
                 .map(jwtTokenProvider::getUserId)
                 .map(userDetailsService::loadUserById)
                 .ifPresent(this::setAuthentication);
 
         filterChain.doFilter(request, response);
+    }
+
+    private java.util.Optional<String> resolveToken(HttpServletRequest request) {
+        String header = request.getHeader("Authorization");
+        if (header != null && header.startsWith("Bearer ")) {
+            return java.util.Optional.of(header.substring(7));
+        }
+        return tokenCookieHelper.resolveAccessToken(request);
     }
 
     private void setAuthentication(UserDetails userDetails) {
