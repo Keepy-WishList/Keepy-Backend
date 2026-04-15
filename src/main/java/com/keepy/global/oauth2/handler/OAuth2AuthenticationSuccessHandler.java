@@ -7,6 +7,7 @@ import com.keepy.global.security.TokenCookieHelper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -20,6 +21,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private final AuthService authService;
     private final TokenCookieHelper tokenCookieHelper;
 
+    @Value("${frontend.url}")
+    private String frontendUrl;
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException {
@@ -27,6 +31,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         TokenResponse tokens = authService.issueTokens(principal.getUserId());
 
         tokenCookieHelper.setTokenCookies(response, tokens);
-        getRedirectStrategy().sendRedirect(request, response, "http://localhost:3000/auth/callback");
+        getRedirectStrategy().sendRedirect(request, response, frontendUrl + "/auth/callback");
     }
 }

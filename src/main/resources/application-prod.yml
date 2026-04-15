@@ -70,6 +70,9 @@ app:
   cookie:
     secure: true
 
+frontend:
+  url: ${FRONTEND_URL}
+
 logging:
   level:
     org.hibernate.SQL: DEBUG

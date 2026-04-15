@@ -81,6 +81,7 @@ jobs:
             GCP_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }}
             GCS_BUCKET_NAME=${{ secrets.GCS_BUCKET_NAME }}
             SERVER_DOMAIN=${{ secrets.SERVER_DOMAIN }}
+            FRONTEND_URL=${{ secrets.FRONTEND_URL }}
             ENVEOF
 
             echo '${{ secrets.GCP_SA_KEY }}' | docker login -u _json_key --password-stdin asia-northeast3-docker.pkg.dev
