@@ -12,6 +12,7 @@ import com.keepy.domain.user.repository.UserRepository;
 import com.keepy.global.exception.CustomException;
 import com.keepy.global.exception.ErrorCode;
 import com.keepy.infra.gcs.GcsService;
+import com.keepy.infra.naver.NaverShoppingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,8 +20,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.UriUtils;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
@@ -35,32 +39,23 @@ public class AnalysisService {
     private final ObjectMapper objectMapper;
     private final ItemService itemService;
     private final UserRepository userRepository;
+    private final NaverShoppingService naverShoppingService;
 
     @Value("${openai.model}")
     private String model;
 
     private static final String ANALYSIS_PROMPT = """
-            You are a product identification and price comparison AI for a Korean shopping app called Keepy.
+            You are a product identification AI for a Korean shopping app called Keepy.
 
             Analyze the product in this image and return a JSON object with this exact structure:
             {
               "productName": "exact product name in Korean or English",
               "brand": "brand name",
               "category": "one of: COSMETICS, CLOTHES, SHOES, TECH, FOOD, OTHER",
-              "estimatedPrice": numeric price in KRW (no currency symbol),
-              "shoppingOptions": [
-                {
-                  "siteName": "shopping site name",
-                  "siteUrl": "product URL on that site",
-                  "price": numeric price in KRW,
-                  "deliveryFee": "delivery fee info e.g. 무료배송 or 3,000원 or 오프라인 구매"
-                }
-              ]
+              "estimatedPrice": numeric price in KRW (no currency symbol)
             }
 
-            Find this product on these Korean shopping sites in order of priority: 지그재그, 에이블리, 쿠팡, 올리브영, 네이버쇼핑.
-            Try to find 5~6 purchase options total.
-            If the product is not sold online, find offline store locations in Korea (e.g. department stores, brand stores) and include them in shoppingOptions with deliveryDays as null.
+            Focus on identifying the product accurately from the image.
             If you cannot identify the product clearly, make your best estimate.
             CRITICAL: Return ONLY the raw JSON object. Do NOT wrap it in markdown code blocks. Do NOT add any explanation before or after. Your entire response must be valid JSON starting with { and ending with }.
             """;
@@ -87,16 +82,16 @@ public class AnalysisService {
 
         Category category = parseCategory(result.category());
 
-        List<ItemSaveRequest.ShoppingOptionSaveRequest> shoppingOptions = null;
-        if (result.shoppingOptions() != null) {
-            shoppingOptions = result.shoppingOptions().stream()
-                    .map(opt -> new ItemSaveRequest.ShoppingOptionSaveRequest(
-                            opt.siteName(),
-                            opt.siteUrl(),
-                            opt.price(),
-                            opt.deliveryFee()
-                    ))
-                    .toList();
+        String searchQuery = buildSearchQuery(result.brand(), result.productName());
+        List<ItemSaveRequest.ShoppingOptionSaveRequest> shoppingOptions =
+                new ArrayList<>(naverShoppingService.search(searchQuery));
+
+        if (category == Category.CLOTHES || category == Category.SHOES) {
+            String encoded = UriUtils.encode(result.productName(), StandardCharsets.UTF_8);
+            shoppingOptions.add(new ItemSaveRequest.ShoppingOptionSaveRequest(
+                    "지그재그", "https://zigzag.kr/search?q=" + encoded, null, null));
+            shoppingOptions.add(new ItemSaveRequest.ShoppingOptionSaveRequest(
+                    "에이블리", "https://a-bly.com/search?keyword=" + encoded, null, null));
         }
 
         ItemSaveRequest saveRequest = new ItemSaveRequest(
@@ -111,6 +106,13 @@ public class AnalysisService {
         );
 
         return itemService.save(userId, saveRequest);
+    }
+
+    private String buildSearchQuery(String brand, String productName) {
+        if (brand != null && !brand.isBlank()) {
+            return brand + " " + productName;
+        }
+        return productName;
     }
 
     private Category parseCategory(String categoryStr) {
@@ -143,7 +145,7 @@ public class AnalysisService {
     private String callOpenAi(String base64Image, String mimeType) {
         Map<String, Object> requestBody = Map.of(
                 "model", model,
-                "max_tokens", 1500,
+                "max_tokens", 500,
                 "messages", List.of(
                         Map.of(
                                 "role", "user",

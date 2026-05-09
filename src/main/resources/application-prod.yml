@@ -61,6 +61,10 @@ openai:
   api-url: https://factchat-cloud.mindlogic.ai/v1/api/anthropic/messages
   model: claude-sonnet-4-5-20250929
 
+naver:
+  client-id: ${NAVER_CLIENT_ID}
+  client-secret: ${NAVER_CLIENT_SECRET}
+
 gcp:
   project-id: ${GCP_PROJECT_ID}
   sa-key-json: ${GCP_SA_KEY_JSON}

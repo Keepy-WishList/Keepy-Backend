@@ -104,6 +104,8 @@ jobs:
                   GCP_PROJECT_ID: ${GCP_PROJECT_ID}
                   GCS_BUCKET_NAME: ${GCS_BUCKET_NAME}
                   GCP_SA_KEY_JSON: ${GCP_SA_KEY_JSON}
+                  NAVER_CLIENT_ID: ${NAVER_CLIENT_ID}
+                  NAVER_CLIENT_SECRET: ${NAVER_CLIENT_SECRET}
                   SERVER_DOMAIN: ${SERVER_DOMAIN}
                   FRONTEND_URL: ${FRONTEND_URL}
                 depends_on:
@@ -126,6 +128,8 @@ jobs:
             GCP_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }}
             GCS_BUCKET_NAME=${{ secrets.GCS_BUCKET_NAME }}
             GCP_SA_KEY_JSON=${{ env.GCP_SA_KEY_B64 }}
+            NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}
+            NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }}
             SERVER_DOMAIN=${{ secrets.SERVER_DOMAIN }}
             FRONTEND_URL=${{ secrets.FRONTEND_URL }}
             ENVEOF
