@@ -30,7 +30,7 @@ public interface ItemApiSpecification {
     })
     ResponseEntity<com.keepy.global.common.ApiResponse<Page<ItemListResponse>>> getMyItems(
             @Parameter(hidden = true) UserDetails userDetails,
-            @Parameter(description = "카테고리 필터 (FASHION, TECH, INTERIOR, FURNITURE, LIGHTING, DECORATION, KITCHEN, OTHER)")
+            @Parameter(description = "카테고리 필터 (COSMETICS, CLOTHES, SHOES, TECH, FOOD, OTHER)")
             @RequestParam(required = false) String category,
             @Parameter(description = "페이지 번호 (0부터 시작)", example = "0")
             @RequestParam(defaultValue = "0") int page,
@@ -49,7 +49,7 @@ public interface ItemApiSpecification {
     ResponseEntity<com.keepy.global.common.ApiResponse<Page<ItemListResponse>>> search(
             @Parameter(hidden = true) UserDetails userDetails,
             @Parameter(description = "검색 키워드 (상품명, 브랜드)") @RequestParam(required = false) String keyword,
-            @Parameter(description = "카테고리 필터") @RequestParam(required = false) String category,
+            @Parameter(description = "카테고리 필터 (COSMETICS, CLOTHES, SHOES, TECH, FOOD, OTHER)") @RequestParam(required = false) String category,
             @Parameter(description = "최소 가격") @RequestParam(required = false) BigDecimal minPrice,
             @Parameter(description = "최대 가격") @RequestParam(required = false) BigDecimal maxPrice,
             @Parameter(description = "정렬 기준 (latest / price_asc / price_desc)", example = "latest")

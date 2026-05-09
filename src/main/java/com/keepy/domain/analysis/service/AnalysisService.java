@@ -42,23 +42,25 @@ public class AnalysisService {
             {
               "productName": "exact product name in Korean or English",
               "brand": "brand name",
-              "category": "one of: FASHION, TECH, INTERIOR, FURNITURE, LIGHTING, DECORATION, KITCHEN, OTHER",
+              "category": "one of: COSMETICS, CLOTHES, SHOES, TECH, FOOD, OTHER",
               "estimatedPrice": numeric price (no currency symbol),
               "currency": "KRW or USD or EUR",
               "description": "brief product description in Korean (2-3 sentences)",
               "shoppingOptions": [
                 {
-                  "siteName": "shopping site name (e.g. 쿠팡, 네이버쇼핑, 11번가, 지마켓, Amazon)",
+                  "siteName": "shopping site name",
                   "siteUrl": "product URL on that site",
                   "price": numeric price,
                   "currency": "KRW or USD",
-                  "deliveryDays": estimated delivery days as integer,
-                  "deliveryFee": "delivery fee info e.g. 무료배송 or 3,000원"
+                  "deliveryDays": estimated delivery days as integer (null if offline),
+                  "deliveryFee": "delivery fee info e.g. 무료배송 or 3,000원 or 오프라인 구매"
                 }
               ]
             }
 
-            Find this product on at least 3 major Korean shopping sites (쿠팡, 네이버쇼핑, 11번가, 지마켓) and/or international sites if relevant.
+            Find this product on these Korean shopping sites in order of priority: 지그재그, 에이블리, 쿠팡, 올리브영, 네이버쇼핑.
+            Try to find 5~6 purchase options total.
+            If the product is not sold online, find offline store locations in Korea (e.g. department stores, brand stores) and include them in shoppingOptions with deliveryDays as null.
             If you cannot identify the product clearly, make your best estimate.
             CRITICAL: Return ONLY the raw JSON object. Do NOT wrap it in markdown code blocks. Do NOT add any explanation before or after. Your entire response must be valid JSON starting with { and ending with }.
             """;
