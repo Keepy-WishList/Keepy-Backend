@@ -28,22 +28,19 @@ public class ShoppingOption {
 
     private BigDecimal price;
 
-    private Integer deliveryDays;
-
     private String deliveryFee;
 
     private ShoppingOption(Long itemId, String siteName, String siteUrl, BigDecimal price,
-                           Integer deliveryDays, String deliveryFee) {
+                           String deliveryFee) {
         this.itemId = itemId;
         this.siteName = siteName;
         this.siteUrl = siteUrl;
         this.price = price;
-        this.deliveryDays = deliveryDays;
         this.deliveryFee = deliveryFee;
     }
 
     public static ShoppingOption of(Long itemId, String siteName, String siteUrl, BigDecimal price,
-                                    Integer deliveryDays, String deliveryFee) {
-        return new ShoppingOption(itemId, siteName, siteUrl, price, deliveryDays, deliveryFee);
+                                    String deliveryFee) {
+        return new ShoppingOption(itemId, siteName, siteUrl, price, deliveryFee);
     }
 }

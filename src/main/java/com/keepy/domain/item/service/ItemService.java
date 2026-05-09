@@ -49,7 +49,6 @@ public class ItemService {
                             opt.siteName(),
                             opt.siteUrl(),
                             opt.price(),
-                            opt.deliveryDays(),
                             opt.deliveryFee()
                     ))
                     .map(shoppingOptionRepository::save)

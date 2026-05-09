@@ -20,7 +20,6 @@ public record AnalysisResponse(
             String siteName,
             String siteUrl,
             BigDecimal price,
-            Integer deliveryDays,
             String deliveryFee
     ) {}
 }

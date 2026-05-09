@@ -30,7 +30,6 @@ public record ItemSaveRequest(
             String siteName,
             String siteUrl,
             BigDecimal price,
-            Integer deliveryDays,
             String deliveryFee
     ) {}
 }

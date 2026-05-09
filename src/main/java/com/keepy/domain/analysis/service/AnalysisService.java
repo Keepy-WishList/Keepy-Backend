@@ -50,7 +50,6 @@ public class AnalysisService {
                   "siteName": "shopping site name",
                   "siteUrl": "product URL on that site",
                   "price": numeric price in KRW,
-                  "deliveryDays": estimated delivery days as integer (null if offline),
                   "deliveryFee": "delivery fee info e.g. 무료배송 or 3,000원 or 오프라인 구매"
                 }
               ]
@@ -83,7 +82,6 @@ public class AnalysisService {
                             opt.siteName(),
                             opt.siteUrl(),
                             opt.price(),
-                            opt.deliveryDays(),
                             opt.deliveryFee()
                     ))
                     .toList();
