@@ -125,5 +125,5 @@ jobs:
 
             cp ~/keepy/.env .
             docker compose -f ~/keepy/docker-compose.yml pull app
-            docker compose -f ~/keepy/docker-compose.yml up -d --force-recreate
+            docker compose -f ~/keepy/docker-compose.yml up -d --force-recreate app
             docker image prune -af
