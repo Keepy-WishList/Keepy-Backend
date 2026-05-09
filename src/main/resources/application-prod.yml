@@ -63,6 +63,7 @@ openai:
 
 gcp:
   project-id: ${GCP_PROJECT_ID}
+  sa-key-json: ${GCP_SA_KEY_JSON}
   storage:
     bucket: ${GCS_BUCKET_NAME}
 

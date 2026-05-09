@@ -47,6 +47,9 @@ jobs:
       - name: Lowercase image name
         run: echo "IMAGE=${IMAGE,,}" >> $GITHUB_ENV
 
+      - name: Base64 encode SA key
+        run: echo "GCP_SA_KEY_B64=$(echo '${{ secrets.GCP_SA_KEY }}' | base64 -w0)" >> $GITHUB_ENV
+
       - name: Build Docker image
         run: docker build -t ${{ env.IMAGE }}:${{ github.sha }} -t ${{ env.IMAGE }}:latest .
 
@@ -100,6 +103,7 @@ jobs:
                   MINDLOGIC_API_KEY: ${MINDLOGIC_API_KEY}
                   GCP_PROJECT_ID: ${GCP_PROJECT_ID}
                   GCS_BUCKET_NAME: ${GCS_BUCKET_NAME}
+                  GCP_SA_KEY_JSON: ${GCP_SA_KEY_JSON}
                   SERVER_DOMAIN: ${SERVER_DOMAIN}
                   FRONTEND_URL: ${FRONTEND_URL}
                 depends_on:
@@ -121,6 +125,7 @@ jobs:
             MINDLOGIC_API_KEY=${{ secrets.MINDLOGIC_API_KEY }}
             GCP_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }}
             GCS_BUCKET_NAME=${{ secrets.GCS_BUCKET_NAME }}
+            GCP_SA_KEY_JSON=${{ env.GCP_SA_KEY_B64 }}
             SERVER_DOMAIN=${{ secrets.SERVER_DOMAIN }}
             FRONTEND_URL=${{ secrets.FRONTEND_URL }}
             ENVEOF
