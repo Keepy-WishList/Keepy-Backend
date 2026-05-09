@@ -9,7 +9,6 @@ public record ShoppingOptionDto(
         String siteName,
         String siteUrl,
         BigDecimal price,
-        String currency,
         Integer deliveryDays,
         String deliveryFee
 ) {
@@ -19,7 +18,6 @@ public record ShoppingOptionDto(
                 option.getSiteName(),
                 option.getSiteUrl(),
                 option.getPrice(),
-                option.getCurrency(),
                 option.getDeliveryDays(),
                 option.getDeliveryFee()
         );

@@ -33,8 +33,6 @@ public class Item {
 
     private BigDecimal price;
 
-    private String currency;
-
     private String imageUrl;
 
     private String screenshotUrl;
@@ -55,14 +53,13 @@ public class Item {
     private LocalDateTime updatedAt;
 
     private Item(Long userId, String productName, String brand, Category category,
-                 BigDecimal price, String currency, String imageUrl, String screenshotUrl,
+                 BigDecimal price, String imageUrl, String screenshotUrl,
                  String description, String memo) {
         this.userId = userId;
         this.productName = productName;
         this.brand = brand;
         this.category = category;
         this.price = price;
-        this.currency = currency;
         this.imageUrl = imageUrl;
         this.screenshotUrl = screenshotUrl;
         this.description = description;
@@ -71,9 +68,9 @@ public class Item {
     }
 
     public static Item of(Long userId, String productName, String brand, Category category,
-                          BigDecimal price, String currency, String imageUrl, String screenshotUrl,
+                          BigDecimal price, String imageUrl, String screenshotUrl,
                           String description, String memo) {
-        return new Item(userId, productName, brand, category, price, currency,
+        return new Item(userId, productName, brand, category, price,
                 imageUrl, screenshotUrl, description, memo);
     }
 

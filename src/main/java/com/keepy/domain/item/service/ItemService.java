@@ -34,7 +34,6 @@ public class ItemService {
                 request.brand(),
                 request.category(),
                 request.price(),
-                request.currency(),
                 request.imageUrl(),
                 request.screenshotUrl(),
                 request.description(),
@@ -50,7 +49,6 @@ public class ItemService {
                             opt.siteName(),
                             opt.siteUrl(),
                             opt.price(),
-                            opt.currency(),
                             opt.deliveryDays(),
                             opt.deliveryFee()
                     ))

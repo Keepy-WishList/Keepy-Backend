@@ -16,8 +16,6 @@ public record ItemSaveRequest(
 
         BigDecimal price,
 
-        String currency,
-
         String imageUrl,
 
         String screenshotUrl,
@@ -32,7 +30,6 @@ public record ItemSaveRequest(
             String siteName,
             String siteUrl,
             BigDecimal price,
-            String currency,
             Integer deliveryDays,
             String deliveryFee
     ) {}

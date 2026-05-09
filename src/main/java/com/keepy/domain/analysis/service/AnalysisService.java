@@ -43,15 +43,13 @@ public class AnalysisService {
               "productName": "exact product name in Korean or English",
               "brand": "brand name",
               "category": "one of: COSMETICS, CLOTHES, SHOES, TECH, FOOD, OTHER",
-              "estimatedPrice": numeric price (no currency symbol),
-              "currency": "KRW or USD or EUR",
+              "estimatedPrice": numeric price in KRW (no currency symbol),
               "description": "brief product description in Korean (2-3 sentences)",
               "shoppingOptions": [
                 {
                   "siteName": "shopping site name",
                   "siteUrl": "product URL on that site",
-                  "price": numeric price,
-                  "currency": "KRW or USD",
+                  "price": numeric price in KRW,
                   "deliveryDays": estimated delivery days as integer (null if offline),
                   "deliveryFee": "delivery fee info e.g. 무료배송 or 3,000원 or 오프라인 구매"
                 }
@@ -85,7 +83,6 @@ public class AnalysisService {
                             opt.siteName(),
                             opt.siteUrl(),
                             opt.price(),
-                            opt.currency(),
                             opt.deliveryDays(),
                             opt.deliveryFee()
                     ))
@@ -97,7 +94,6 @@ public class AnalysisService {
                 result.brand(),
                 category,
                 result.estimatedPrice(),
-                result.currency(),
                 null,
                 screenshotUrl,
                 result.description(),

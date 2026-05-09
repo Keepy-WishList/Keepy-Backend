@@ -11,7 +11,6 @@ public record AnalysisResponse(
         String brand,
         String category,
         BigDecimal estimatedPrice,
-        String currency,
         String description,
         String screenshotUrl,
         List<ShoppingOptionResult> shoppingOptions
@@ -21,7 +20,6 @@ public record AnalysisResponse(
             String siteName,
             String siteUrl,
             BigDecimal price,
-            String currency,
             Integer deliveryDays,
             String deliveryFee
     ) {}
