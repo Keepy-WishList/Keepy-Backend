@@ -181,7 +181,11 @@ public class AnalysisService {
 
     private AnalysisResponse parseResponse(String json) {
         try {
-            return objectMapper.readValue(json, AnalysisResponse.class);
+            String cleaned = json.strip();
+            if (cleaned.startsWith("```")) {
+                cleaned = cleaned.replaceFirst("^```[a-zA-Z]*\\s*", "").replaceFirst("```\\s*$", "").strip();
+            }
+            return objectMapper.readValue(cleaned, AnalysisResponse.class);
         } catch (Exception e) {
             log.error("Failed to parse OpenAI response: {}", json, e);
             throw new CustomException(ErrorCode.ANALYSIS_FAILED);
