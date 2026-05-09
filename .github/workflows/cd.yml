@@ -51,23 +51,6 @@ jobs:
           docker push ${{ env.IMAGE }}:${{ github.sha }}
           docker push ${{ env.IMAGE }}:latest
 
-      - name: Prepare deploy directory on VM
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.VM_HOST }}
-          username: ${{ secrets.VM_USER }}
-          key: ${{ secrets.VM_SSH_KEY }}
-          script: mkdir -p ~/keepy
-
-      - name: Copy docker-compose.yml to VM
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.VM_HOST }}
-          username: ${{ secrets.VM_USER }}
-          key: ${{ secrets.VM_SSH_KEY }}
-          source: docker-compose.yml
-          target: keepy
-
       - name: Deploy to VM
         uses: appleboy/ssh-action@v1
         with:
@@ -75,6 +58,54 @@ jobs:
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.VM_SSH_KEY }}
           script: |
+            mkdir -p ~/keepy
+
+            cat > ~/keepy/docker-compose.yml << 'COMPOSEEOF'
+            services:
+              mysql:
+                container_name: keepy-mysql
+                image: mysql:8.0
+                environment:
+                  MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+                  MYSQL_DATABASE: keepy
+                  MYSQL_USER: ${MYSQL_USERNAME}
+                  MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+                volumes:
+                  - mysql_data:/var/lib/mysql
+                healthcheck:
+                  test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+                  interval: 10s
+                  timeout: 5s
+                  retries: 5
+
+              app:
+                container_name: keepy
+                image: asia-northeast3-docker.pkg.dev/keepy-493212/keepy/keepy-backend:latest
+                ports:
+                  - "8080:8080"
+                environment:
+                  SPRING_PROFILES_ACTIVE: prod
+                  MYSQL_URL: jdbc:mysql://mysql:3306/keepy?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+                  MYSQL_USERNAME: ${MYSQL_USERNAME}
+                  MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+                  GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+                  GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+                  APPLE_CLIENT_ID: ${APPLE_CLIENT_ID}
+                  APPLE_CLIENT_SECRET: ${APPLE_CLIENT_SECRET}
+                  JWT_SECRET: ${JWT_SECRET}
+                  MINDLOGIC_API_KEY: ${MINDLOGIC_API_KEY}
+                  GCP_PROJECT_ID: ${GCP_PROJECT_ID}
+                  GCS_BUCKET_NAME: ${GCS_BUCKET_NAME}
+                  SERVER_DOMAIN: ${SERVER_DOMAIN}
+                  FRONTEND_URL: ${FRONTEND_URL}
+                depends_on:
+                  mysql:
+                    condition: service_healthy
+
+            volumes:
+              mysql_data:
+            COMPOSEEOF
+
             cat > ~/keepy/.env << 'ENVEOF'
             MYSQL_USERNAME=${{ secrets.MYSQL_USERNAME }}
             MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
