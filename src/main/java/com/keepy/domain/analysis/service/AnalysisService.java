@@ -75,6 +75,7 @@ public class AnalysisService {
         }
 
         validateImage(image);
+        user.incrementAnalysisCount();
 
         String screenshotUrl = gcsService.upload(image, "screenshots");
 
@@ -109,9 +110,7 @@ public class AnalysisService {
                 shoppingOptions
         );
 
-        ItemDetailResponse response = itemService.save(userId, saveRequest);
-        user.incrementAnalysisCount();
-        return response;
+        return itemService.save(userId, saveRequest);
     }
 
     private Category parseCategory(String categoryStr) {
