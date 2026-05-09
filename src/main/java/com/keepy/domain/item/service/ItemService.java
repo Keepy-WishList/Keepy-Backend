@@ -69,11 +69,7 @@ public class ItemService {
             items = itemRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable);
         }
 
-        return items.map(item -> {
-            List<ShoppingOption> options = shoppingOptionRepository.findByItemId(item.getId());
-            String bestSiteName = options.isEmpty() ? null : options.getFirst().getSiteName();
-            return ItemListResponse.from(item, bestSiteName);
-        });
+        return items.map(ItemListResponse::from);
     }
 
     @Transactional(readOnly = true)
@@ -123,11 +119,7 @@ public class ItemService {
         Pageable pageable = PageRequest.of(page, size, sortOrder);
 
         return itemRepository.search(userId, keyword, category, minPrice, maxPrice, pageable)
-                .map(item -> {
-                    List<ShoppingOption> options = shoppingOptionRepository.findByItemId(item.getId());
-                    String bestSiteName = options.isEmpty() ? null : options.getFirst().getSiteName();
-                    return ItemListResponse.from(item, bestSiteName);
-                });
+                .map(ItemListResponse::from);
     }
 
     private Item findItemWithOwnerCheck(Long userId, Long itemId) {

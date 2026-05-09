@@ -13,10 +13,9 @@ public record ItemListResponse(
         BigDecimal price,
         String imageUrl,
         Boolean isPurchased,
-        String bestSiteName,
         LocalDateTime createdAt
 ) {
-    public static ItemListResponse from(Item item, String bestSiteName) {
+    public static ItemListResponse from(Item item) {
         return new ItemListResponse(
                 item.getId(),
                 item.getProductName(),
@@ -25,7 +24,6 @@ public record ItemListResponse(
                 item.getPrice(),
                 item.getImageUrl(),
                 item.getIsPurchased(),
-                bestSiteName,
                 item.getCreatedAt()
         );
     }
