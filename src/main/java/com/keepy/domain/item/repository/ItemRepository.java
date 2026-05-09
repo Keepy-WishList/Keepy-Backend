@@ -12,10 +12,9 @@ import java.math.BigDecimal;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
-    // 내 위시리스트 조회 (카테고리 필터)
-    Page<Item> findByUserIdAndCategoryOrderByCreatedAtDesc(Long userId, Category category, Pageable pageable);
+    Page<Item> findByUserIdAndCategory(Long userId, Category category, Pageable pageable);
 
-    Page<Item> findByUserIdOrderByCreatedAtDesc(Long userId, Pageable pageable);
+    Page<Item> findByUserId(Long userId, Pageable pageable);
 
     // 검색 + 필터링
     @Query("""

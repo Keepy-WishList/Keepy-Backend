@@ -58,15 +58,16 @@ public class ItemService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ItemListResponse> getMyItems(Long userId, String categoryStr, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+    public Page<ItemListResponse> getMyItems(Long userId, String categoryStr, String sort, int page, int size) {
+        Sort sortOrder = "oldest".equals(sort) ? Sort.by("createdAt").ascending() : Sort.by("createdAt").descending();
+        Pageable pageable = PageRequest.of(page, size, sortOrder);
 
         Page<Item> items;
         if (categoryStr != null && !categoryStr.isBlank()) {
             Category category = Category.valueOf(categoryStr.toUpperCase());
-            items = itemRepository.findByUserIdAndCategoryOrderByCreatedAtDesc(userId, category, pageable);
+            items = itemRepository.findByUserIdAndCategory(userId, category, pageable);
         } else {
-            items = itemRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable);
+            items = itemRepository.findByUserId(userId, pageable);
         }
 
         return items.map(ItemListResponse::from);

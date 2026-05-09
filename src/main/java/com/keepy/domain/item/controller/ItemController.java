@@ -26,10 +26,11 @@ public class ItemController implements ItemApiSpecification {
     public ResponseEntity<ApiResponse<Page<ItemListResponse>>> getMyItems(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam(required = false) String category,
+            @RequestParam(defaultValue = "latest") String sort,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         Long userId = Long.parseLong(userDetails.getUsername());
-        return ResponseEntity.ok(ApiResponse.success(itemService.getMyItems(userId, category, page, size)));
+        return ResponseEntity.ok(ApiResponse.success(itemService.getMyItems(userId, category, sort, page, size)));
     }
 
     // 아이템 검색 및 필터링

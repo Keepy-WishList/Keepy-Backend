@@ -32,6 +32,8 @@ public interface ItemApiSpecification {
             @Parameter(hidden = true) UserDetails userDetails,
             @Parameter(description = "카테고리 필터 (COSMETICS, CLOTHES, SHOES, TECH, FOOD, OTHER)")
             @RequestParam(required = false) String category,
+            @Parameter(description = "정렬 기준 (latest: 최신순, oldest: 과거순)", example = "latest")
+            @RequestParam(defaultValue = "latest") String sort,
             @Parameter(description = "페이지 번호 (0부터 시작)", example = "0")
             @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "페이지 크기", example = "20")
