@@ -11,10 +11,13 @@ public class OpenAiConfig {
     @Value("${openai.api-key}")
     private String apiKey;
 
+    @Value("${openai.api-url}")
+    private String apiUrl;
+
     @Bean
     public RestClient openAiRestClient() {
         return RestClient.builder()
-                .baseUrl("https://factchat-cloud.mindlogic.ai/v1/gateway")
+                .baseUrl(apiUrl)
                 .defaultHeader("Authorization", "Bearer " + apiKey)
                 .defaultHeader("Content-Type", "application/json")
                 .build();
