@@ -53,27 +53,23 @@ jobs:
 
       - name: Deploy to VM
         uses: appleboy/ssh-action@v1
-        env:
-          IMAGE_TAG: ${{ github.sha }}
-          IMAGE_REPO: ${{ env.IMAGE }}
         with:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.VM_SSH_KEY }}
-          envs: IMAGE_TAG,IMAGE_REPO
           script: |
             mkdir -p ~/keepy
 
-            cat > ~/keepy/docker-compose.yml << COMPOSEEOF
+            cat > ~/keepy/docker-compose.yml << 'COMPOSEEOF'
             services:
               mysql:
                 container_name: keepy-mysql
                 image: mysql:8.0
                 environment:
-                  MYSQL_ROOT_PASSWORD: \${MYSQL_PASSWORD}
+                  MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
                   MYSQL_DATABASE: keepy
-                  MYSQL_USER: \${MYSQL_USERNAME}
-                  MYSQL_PASSWORD: \${MYSQL_PASSWORD}
+                  MYSQL_USER: ${MYSQL_USERNAME}
+                  MYSQL_PASSWORD: ${MYSQL_PASSWORD}
                 volumes:
                   - mysql_data:/var/lib/mysql
                 healthcheck:
@@ -84,24 +80,24 @@ jobs:
 
               app:
                 container_name: keepy
-                image: ${IMAGE_REPO}:${IMAGE_TAG}
+                image: ${{ env.IMAGE }}:${{ github.sha }}
                 ports:
                   - "8080:8080"
                 environment:
                   SPRING_PROFILES_ACTIVE: prod
                   MYSQL_URL: jdbc:mysql://mysql:3306/keepy?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-                  MYSQL_USERNAME: \${MYSQL_USERNAME}
-                  MYSQL_PASSWORD: \${MYSQL_PASSWORD}
-                  GOOGLE_CLIENT_ID: \${GOOGLE_CLIENT_ID}
-                  GOOGLE_CLIENT_SECRET: \${GOOGLE_CLIENT_SECRET}
-                  APPLE_CLIENT_ID: \${APPLE_CLIENT_ID}
-                  APPLE_CLIENT_SECRET: \${APPLE_CLIENT_SECRET}
-                  JWT_SECRET: \${JWT_SECRET}
-                  MINDLOGIC_API_KEY: \${MINDLOGIC_API_KEY}
-                  GCP_PROJECT_ID: \${GCP_PROJECT_ID}
-                  GCS_BUCKET_NAME: \${GCS_BUCKET_NAME}
-                  SERVER_DOMAIN: \${SERVER_DOMAIN}
-                  FRONTEND_URL: \${FRONTEND_URL}
+                  MYSQL_USERNAME: ${MYSQL_USERNAME}
+                  MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+                  GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+                  GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+                  APPLE_CLIENT_ID: ${APPLE_CLIENT_ID}
+                  APPLE_CLIENT_SECRET: ${APPLE_CLIENT_SECRET}
+                  JWT_SECRET: ${JWT_SECRET}
+                  MINDLOGIC_API_KEY: ${MINDLOGIC_API_KEY}
+                  GCP_PROJECT_ID: ${GCP_PROJECT_ID}
+                  GCS_BUCKET_NAME: ${GCS_BUCKET_NAME}
+                  SERVER_DOMAIN: ${SERVER_DOMAIN}
+                  FRONTEND_URL: ${FRONTEND_URL}
                 depends_on:
                   mysql:
                     condition: service_healthy
