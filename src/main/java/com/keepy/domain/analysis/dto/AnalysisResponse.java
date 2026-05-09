@@ -11,7 +11,6 @@ public record AnalysisResponse(
         String brand,
         String category,
         BigDecimal estimatedPrice,
-        String description,
         String screenshotUrl,
         List<ShoppingOptionResult> shoppingOptions
 ) {

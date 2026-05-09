@@ -15,7 +15,6 @@ public record ItemDetailResponse(
         BigDecimal price,
         String imageUrl,
         String screenshotUrl,
-        String description,
         String memo,
         Boolean isPurchased,
         List<ShoppingOptionDto> shoppingOptions,
@@ -30,7 +29,6 @@ public record ItemDetailResponse(
                 item.getPrice(),
                 item.getImageUrl(),
                 item.getScreenshotUrl(),
-                item.getDescription(),
                 item.getMemo(),
                 item.getIsPurchased(),
                 shoppingOptions.stream()

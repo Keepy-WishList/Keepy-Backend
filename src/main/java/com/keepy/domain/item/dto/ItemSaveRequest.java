@@ -20,8 +20,6 @@ public record ItemSaveRequest(
 
         String screenshotUrl,
 
-        String description,
-
         String memo,
 
         List<ShoppingOptionSaveRequest> shoppingOptions

@@ -37,9 +37,6 @@ public class Item {
 
     private String screenshotUrl;
 
-    @Column(length = 1000)
-    private String description;
-
     @Column(length = 2000)
     private String memo;
 
@@ -53,8 +50,7 @@ public class Item {
     private LocalDateTime updatedAt;
 
     private Item(Long userId, String productName, String brand, Category category,
-                 BigDecimal price, String imageUrl, String screenshotUrl,
-                 String description, String memo) {
+                 BigDecimal price, String imageUrl, String screenshotUrl, String memo) {
         this.userId = userId;
         this.productName = productName;
         this.brand = brand;
@@ -62,16 +58,13 @@ public class Item {
         this.price = price;
         this.imageUrl = imageUrl;
         this.screenshotUrl = screenshotUrl;
-        this.description = description;
         this.memo = memo;
         this.isPurchased = false;
     }
 
     public static Item of(Long userId, String productName, String brand, Category category,
-                          BigDecimal price, String imageUrl, String screenshotUrl,
-                          String description, String memo) {
-        return new Item(userId, productName, brand, category, price,
-                imageUrl, screenshotUrl, description, memo);
+                          BigDecimal price, String imageUrl, String screenshotUrl, String memo) {
+        return new Item(userId, productName, brand, category, price, imageUrl, screenshotUrl, memo);
     }
 
     public void updateMemo(String memo) {

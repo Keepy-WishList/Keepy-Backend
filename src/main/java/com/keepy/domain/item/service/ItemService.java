@@ -36,7 +36,6 @@ public class ItemService {
                 request.price(),
                 request.imageUrl(),
                 request.screenshotUrl(),
-                request.description(),
                 request.memo()
         );
         itemRepository.save(item);

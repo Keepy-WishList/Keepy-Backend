@@ -44,7 +44,6 @@ public class AnalysisService {
               "brand": "brand name",
               "category": "one of: COSMETICS, CLOTHES, SHOES, TECH, FOOD, OTHER",
               "estimatedPrice": numeric price in KRW (no currency symbol),
-              "description": "brief product description in Korean (2-3 sentences)",
               "shoppingOptions": [
                 {
                   "siteName": "shopping site name",
@@ -94,7 +93,6 @@ public class AnalysisService {
                 result.estimatedPrice(),
                 null,
                 screenshotUrl,
-                result.description(),
                 null,
                 shoppingOptions
         );
