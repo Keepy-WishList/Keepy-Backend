@@ -165,7 +165,7 @@ public class AnalysisService {
 
         try {
             String responseBody = openAiRestClient.post()
-                    .uri("/v1/chat/completions")
+                    .uri("/v1/gateway/chat/completions")
                     .body(requestBody)
                     .retrieve()
                     .body(String.class);
