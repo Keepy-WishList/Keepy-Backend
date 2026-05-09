@@ -143,14 +143,17 @@ public class AnalysisService {
     private String callOpenAi(String base64Image, String mimeType) {
         Map<String, Object> requestBody = Map.of(
                 "model", model,
+                "max_tokens", 1500,
                 "messages", List.of(
                         Map.of(
                                 "role", "user",
                                 "content", List.of(
                                         Map.of(
-                                                "type", "image_url",
-                                                "image_url", Map.of(
-                                                        "url", "data:" + mimeType + ";base64," + base64Image
+                                                "type", "image",
+                                                "source", Map.of(
+                                                        "type", "base64",
+                                                        "media_type", mimeType,
+                                                        "data", base64Image
                                                 )
                                         ),
                                         Map.of(
@@ -159,8 +162,7 @@ public class AnalysisService {
                                         )
                                 )
                         )
-                ),
-                "max_tokens", 1500
+                )
         );
 
         try {
@@ -170,7 +172,7 @@ public class AnalysisService {
                     .body(String.class);
 
             JsonNode root = objectMapper.readTree(responseBody);
-            return root.path("choices").get(0).path("message").path("content").asText();
+            return root.path("content").get(0).path("text").asText();
         } catch (Exception e) {
             log.error("OpenAI API call failed", e);
             throw new CustomException(ErrorCode.ANALYSIS_FAILED);

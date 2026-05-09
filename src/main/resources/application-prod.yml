@@ -58,8 +58,8 @@ jwt:
 
 openai:
   api-key: ${MINDLOGIC_API_KEY}
-  api-url: https://factchat-cloud.mindlogic.ai/v1/gateway/chat/completions/
-  model: claude-sonnet-4-6
+  api-url: https://factchat-cloud.mindlogic.ai/v1/api/anthropic/messages
+  model: claude-sonnet-4-5-20250929
 
 gcp:
   project-id: ${GCP_PROJECT_ID}
