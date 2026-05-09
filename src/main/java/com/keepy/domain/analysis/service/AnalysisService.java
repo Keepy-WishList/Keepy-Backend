@@ -3,6 +3,10 @@ package com.keepy.domain.analysis.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.keepy.domain.analysis.dto.AnalysisResponse;
+import com.keepy.domain.item.dto.ItemDetailResponse;
+import com.keepy.domain.item.dto.ItemSaveRequest;
+import com.keepy.domain.item.entity.Category;
+import com.keepy.domain.item.service.ItemService;
 import com.keepy.global.exception.CustomException;
 import com.keepy.global.exception.ErrorCode;
 import com.keepy.infra.gcs.GcsService;
@@ -26,6 +30,7 @@ public class AnalysisService {
     private final RestClient openAiRestClient;
     private final GcsService gcsService;
     private final ObjectMapper objectMapper;
+    private final ItemService itemService;
 
     @Value("${openai.model}")
     private String model;
@@ -58,33 +63,56 @@ public class AnalysisService {
             CRITICAL: Return ONLY the raw JSON object. Do NOT wrap it in markdown code blocks. Do NOT add any explanation before or after. Your entire response must be valid JSON starting with { and ending with }.
             """;
 
-    public AnalysisResponse analyze(MultipartFile image) {
+    public ItemDetailResponse analyze(Long userId, MultipartFile image) {
         validateImage(image);
 
-        // S3에 스크린샷 업로드
         String screenshotUrl = gcsService.upload(image, "screenshots");
 
-        // 이미지를 base64로 인코딩
         String base64Image = encodeImageToBase64(image);
         String mimeType = image.getContentType() != null ? image.getContentType() : "image/jpeg";
 
-        // OpenAI API 호출
         String rawResponse = callOpenAi(base64Image, mimeType);
-
-        // 응답 파싱
         AnalysisResponse result = parseResponse(rawResponse);
 
-        // screenshotUrl 주입 후 반환
-        return new AnalysisResponse(
+        Category category = parseCategory(result.category());
+
+        List<ItemSaveRequest.ShoppingOptionSaveRequest> shoppingOptions = null;
+        if (result.shoppingOptions() != null) {
+            shoppingOptions = result.shoppingOptions().stream()
+                    .map(opt -> new ItemSaveRequest.ShoppingOptionSaveRequest(
+                            opt.siteName(),
+                            opt.siteUrl(),
+                            opt.price(),
+                            opt.currency(),
+                            opt.deliveryDays(),
+                            opt.deliveryFee()
+                    ))
+                    .toList();
+        }
+
+        ItemSaveRequest saveRequest = new ItemSaveRequest(
                 result.productName(),
                 result.brand(),
-                result.category(),
+                category,
                 result.estimatedPrice(),
                 result.currency(),
-                result.description(),
+                null,
                 screenshotUrl,
-                result.shoppingOptions()
+                result.description(),
+                null,
+                shoppingOptions
         );
+
+        return itemService.save(userId, saveRequest);
+    }
+
+    private Category parseCategory(String categoryStr) {
+        if (categoryStr == null) return Category.OTHER;
+        try {
+            return Category.valueOf(categoryStr.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return Category.OTHER;
+        }
     }
 
     private void validateImage(MultipartFile image) {

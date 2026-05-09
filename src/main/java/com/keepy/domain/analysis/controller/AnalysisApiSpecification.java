@@ -1,12 +1,13 @@
 package com.keepy.domain.analysis.controller;
 
-import com.keepy.domain.analysis.dto.AnalysisResponse;
+import com.keepy.domain.item.dto.ItemDetailResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "Analysis", description = "AI 이미지 분석 API — 상품 스크린샷을 업로드하면 LLM이 상품 정보와 쇼핑몰별 가격 비교 결과를 반환합니다.")
@@ -31,7 +32,8 @@ public interface AnalysisApiSpecification {
             @ApiResponse(responseCode = "401", description = "인증 필요"),
             @ApiResponse(responseCode = "500", description = "AI 분석 실패")
     })
-    ResponseEntity<com.keepy.global.common.ApiResponse<AnalysisResponse>> analyzeImage(
+    ResponseEntity<com.keepy.global.common.ApiResponse<ItemDetailResponse>> analyzeImage(
+            @Parameter(hidden = true) UserDetails userDetails,
             @Parameter(description = "분석할 상품 스크린샷 이미지 (multipart/form-data)")
             MultipartFile image
     );

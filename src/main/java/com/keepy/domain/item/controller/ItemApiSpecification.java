@@ -2,14 +2,12 @@ package com.keepy.domain.item.controller;
 
 import com.keepy.domain.item.dto.ItemDetailResponse;
 import com.keepy.domain.item.dto.ItemListResponse;
-import com.keepy.domain.item.dto.ItemSaveRequest;
 import com.keepy.domain.item.dto.MemoUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,20 +19,6 @@ import java.math.BigDecimal;
 
 @Tag(name = "Item", description = "위시리스트 아이템 API — 저장·조회·검색·수정·삭제")
 public interface ItemApiSpecification {
-
-    @Operation(
-            summary = "위시리스트 아이템 저장",
-            description = "분석된 상품 정보를 위시리스트에 저장합니다. 쇼핑 옵션(사이트별 가격·배송)도 함께 저장됩니다."
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "저장 성공"),
-            @ApiResponse(responseCode = "400", description = "입력값 유효성 오류"),
-            @ApiResponse(responseCode = "401", description = "인증 필요")
-    })
-    ResponseEntity<com.keepy.global.common.ApiResponse<ItemDetailResponse>> saveItem(
-            @Parameter(hidden = true) UserDetails userDetails,
-            @Valid @RequestBody ItemSaveRequest request
-    );
 
     @Operation(
             summary = "내 위시리스트 조회",

@@ -2,14 +2,11 @@ package com.keepy.domain.item.controller;
 
 import com.keepy.domain.item.dto.ItemDetailResponse;
 import com.keepy.domain.item.dto.ItemListResponse;
-import com.keepy.domain.item.dto.ItemSaveRequest;
 import com.keepy.domain.item.dto.MemoUpdateRequest;
 import com.keepy.domain.item.service.ItemService;
 import com.keepy.global.common.ApiResponse;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,16 +20,6 @@ import java.math.BigDecimal;
 public class ItemController implements ItemApiSpecification {
 
     private final ItemService itemService;
-
-    // 위시리스트에 아이템 저장
-    @PostMapping
-    public ResponseEntity<ApiResponse<ItemDetailResponse>> saveItem(
-            @AuthenticationPrincipal UserDetails userDetails,
-            @Valid @RequestBody ItemSaveRequest request) {
-        Long userId = Long.parseLong(userDetails.getUsername());
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success("아이템이 저장되었습니다.", itemService.save(userId, request)));
-    }
 
     // 내 위시리스트 조회
     @GetMapping
