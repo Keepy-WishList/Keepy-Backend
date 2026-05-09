@@ -3,12 +3,12 @@ package com.keepy.domain.item.controller;
 import com.keepy.domain.item.dto.ItemDetailResponse;
 import com.keepy.domain.item.dto.ItemListResponse;
 import com.keepy.domain.item.dto.MemoUpdateRequest;
+import com.keepy.global.common.PageResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +26,7 @@ public interface ItemApiSpecification {
             @ApiResponse(responseCode = "200", description = "조회 성공"),
             @ApiResponse(responseCode = "401", description = "인증 필요")
     })
-    ResponseEntity<com.keepy.global.common.ApiResponse<Page<ItemListResponse>>> getMyItems(
+    ResponseEntity<com.keepy.global.common.ApiResponse<PageResponse<ItemListResponse>>> getMyItems(
             @Parameter(hidden = true) UserDetails userDetails,
             @Parameter(description = "카테고리 필터 (COSMETICS, CLOTHES, SHOES, TECH, FOOD, OTHER)")
             @RequestParam(required = false) String category,

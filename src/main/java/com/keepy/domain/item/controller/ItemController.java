@@ -5,8 +5,8 @@ import com.keepy.domain.item.dto.ItemListResponse;
 import com.keepy.domain.item.dto.MemoUpdateRequest;
 import com.keepy.domain.item.service.ItemService;
 import com.keepy.global.common.ApiResponse;
+import com.keepy.global.common.PageResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,14 +21,14 @@ public class ItemController implements ItemApiSpecification {
 
     // 내 위시리스트 조회
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<ItemListResponse>>> getMyItems(
+    public ResponseEntity<ApiResponse<PageResponse<ItemListResponse>>> getMyItems(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam(required = false) String category,
             @RequestParam(defaultValue = "latest") String sort,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         Long userId = Long.parseLong(userDetails.getUsername());
-        return ResponseEntity.ok(ApiResponse.success(itemService.getMyItems(userId, category, sort, page, size)));
+        return ResponseEntity.ok(ApiResponse.success(PageResponse.from(itemService.getMyItems(userId, category, sort, page, size))));
     }
 
     // 아이템 상세 조회
