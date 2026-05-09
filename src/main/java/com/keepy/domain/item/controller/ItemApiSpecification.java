@@ -15,9 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.math.BigDecimal;
-
-@Tag(name = "Item", description = "위시리스트 아이템 API — 저장·조회·검색·수정·삭제")
+@Tag(name = "Item", description = "위시리스트 아이템 API — 조회·수정·삭제")
 public interface ItemApiSpecification {
 
     @Operation(
@@ -38,26 +36,6 @@ public interface ItemApiSpecification {
             @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "페이지 크기", example = "20")
             @RequestParam(defaultValue = "20") int size
-    );
-
-    @Operation(
-            summary = "아이템 검색 및 필터링",
-            description = "키워드·카테고리·가격 범위로 검색합니다. sort는 latest(최신순) / price_asc(가격 낮은순) / price_desc(가격 높은순)를 지원합니다."
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "검색 성공"),
-            @ApiResponse(responseCode = "401", description = "인증 필요")
-    })
-    ResponseEntity<com.keepy.global.common.ApiResponse<Page<ItemListResponse>>> search(
-            @Parameter(hidden = true) UserDetails userDetails,
-            @Parameter(description = "검색 키워드 (상품명, 브랜드)") @RequestParam(required = false) String keyword,
-            @Parameter(description = "카테고리 필터 (COSMETICS, CLOTHES, SHOES, TECH, FOOD, OTHER)") @RequestParam(required = false) String category,
-            @Parameter(description = "최소 가격") @RequestParam(required = false) BigDecimal minPrice,
-            @Parameter(description = "최대 가격") @RequestParam(required = false) BigDecimal maxPrice,
-            @Parameter(description = "정렬 기준 (latest / price_asc / price_desc)", example = "latest")
-            @RequestParam(defaultValue = "latest") String sort,
-            @Parameter(description = "페이지 번호", example = "0") @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "페이지 크기", example = "20") @RequestParam(defaultValue = "20") int size
     );
 
     @Operation(

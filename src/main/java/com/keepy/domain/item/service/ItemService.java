@@ -16,7 +16,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -101,26 +100,6 @@ public class ItemService {
         Item item = findItemWithOwnerCheck(userId, itemId);
         shoppingOptionRepository.deleteAll(shoppingOptionRepository.findByItemId(itemId));
         itemRepository.delete(item);
-    }
-
-    @Transactional(readOnly = true)
-    public Page<ItemListResponse> search(Long userId, String keyword, String categoryStr,
-                                         BigDecimal minPrice, BigDecimal maxPrice,
-                                         String sort, int page, int size) {
-        Category category = null;
-        if (categoryStr != null && !categoryStr.isBlank()) {
-            category = Category.valueOf(categoryStr.toUpperCase());
-        }
-
-        Sort sortOrder = switch (sort != null ? sort : "latest") {
-            case "price_asc" -> Sort.by("price").ascending();
-            case "price_desc" -> Sort.by("price").descending();
-            default -> Sort.by("createdAt").descending();
-        };
-        Pageable pageable = PageRequest.of(page, size, sortOrder);
-
-        return itemRepository.search(userId, keyword, category, minPrice, maxPrice, pageable)
-                .map(ItemListResponse::from);
     }
 
     private Item findItemWithOwnerCheck(Long userId, Long itemId) {

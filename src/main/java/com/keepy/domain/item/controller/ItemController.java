@@ -12,8 +12,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
-
 @RestController
 @RequestMapping("/api/items")
 @RequiredArgsConstructor
@@ -31,22 +29,6 @@ public class ItemController implements ItemApiSpecification {
             @RequestParam(defaultValue = "20") int size) {
         Long userId = Long.parseLong(userDetails.getUsername());
         return ResponseEntity.ok(ApiResponse.success(itemService.getMyItems(userId, category, sort, page, size)));
-    }
-
-    // 아이템 검색 및 필터링
-    @GetMapping("/search")
-    public ResponseEntity<ApiResponse<Page<ItemListResponse>>> search(
-            @AuthenticationPrincipal UserDetails userDetails,
-            @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) String category,
-            @RequestParam(required = false) BigDecimal minPrice,
-            @RequestParam(required = false) BigDecimal maxPrice,
-            @RequestParam(defaultValue = "latest") String sort,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
-        Long userId = Long.parseLong(userDetails.getUsername());
-        return ResponseEntity.ok(ApiResponse.success(
-                itemService.search(userId, keyword, category, minPrice, maxPrice, sort, page, size)));
     }
 
     // 아이템 상세 조회
