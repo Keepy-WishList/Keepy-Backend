@@ -7,6 +7,8 @@ import com.keepy.domain.item.dto.ItemDetailResponse;
 import com.keepy.domain.item.dto.ItemSaveRequest;
 import com.keepy.domain.item.entity.Category;
 import com.keepy.domain.item.service.ItemService;
+import com.keepy.domain.user.entity.User;
+import com.keepy.domain.user.repository.UserRepository;
 import com.keepy.global.exception.CustomException;
 import com.keepy.global.exception.ErrorCode;
 import com.keepy.infra.gcs.GcsService;
@@ -14,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,6 +34,7 @@ public class AnalysisService {
     private final GcsService gcsService;
     private final ObjectMapper objectMapper;
     private final ItemService itemService;
+    private final UserRepository userRepository;
 
     @Value("${openai.model}")
     private String model;
@@ -61,7 +65,15 @@ public class AnalysisService {
             CRITICAL: Return ONLY the raw JSON object. Do NOT wrap it in markdown code blocks. Do NOT add any explanation before or after. Your entire response must be valid JSON starting with { and ending with }.
             """;
 
+    @Transactional
     public ItemDetailResponse analyze(Long userId, MultipartFile image) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        if (user.isAnalysisLimitExceeded()) {
+            throw new CustomException(ErrorCode.ANALYSIS_RATE_LIMIT_EXCEEDED);
+        }
+
         validateImage(image);
 
         String screenshotUrl = gcsService.upload(image, "screenshots");
@@ -97,7 +109,9 @@ public class AnalysisService {
                 shoppingOptions
         );
 
-        return itemService.save(userId, saveRequest);
+        ItemDetailResponse response = itemService.save(userId, saveRequest);
+        user.incrementAnalysisCount();
+        return response;
     }
 
     private Category parseCategory(String categoryStr) {

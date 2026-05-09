@@ -31,6 +31,11 @@ public class User {
 
     private String providerId;
 
+    @Column(nullable = false)
+    private int analysisCount = 0;
+
+    private LocalDateTime analysisWindowStart;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 
@@ -50,5 +55,29 @@ public class User {
 
     public void updateProfile(String name) {
         if (name != null) this.name = name;
+    }
+
+    public int getRemainingAnalysisCount() {
+        if (analysisWindowStart == null || LocalDateTime.now().isAfter(analysisWindowStart.plusHours(1))) {
+            return 3;
+        }
+        return Math.max(0, 3 - analysisCount);
+    }
+
+    public void incrementAnalysisCount() {
+        LocalDateTime now = LocalDateTime.now();
+        if (analysisWindowStart == null || now.isAfter(analysisWindowStart.plusHours(1))) {
+            this.analysisWindowStart = now;
+            this.analysisCount = 1;
+        } else {
+            this.analysisCount++;
+        }
+    }
+
+    public boolean isAnalysisLimitExceeded() {
+        if (analysisWindowStart == null || LocalDateTime.now().isAfter(analysisWindowStart.plusHours(1))) {
+            return false;
+        }
+        return analysisCount >= 3;
     }
 }

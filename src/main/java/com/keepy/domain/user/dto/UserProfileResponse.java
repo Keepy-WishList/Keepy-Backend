@@ -6,14 +6,16 @@ public record UserProfileResponse(
         Long id,
         String email,
         String name,
-        String provider
+        String provider,
+        int remainingAnalysisCount
 ) {
     public static UserProfileResponse from(User user) {
         return new UserProfileResponse(
                 user.getId(),
                 user.getEmail(),
                 user.getName(),
-                user.getProvider().name()
+                user.getProvider().name(),
+                user.getRemainingAnalysisCount()
         );
     }
 }

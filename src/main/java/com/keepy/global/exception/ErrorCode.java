@@ -25,6 +25,7 @@ public enum ErrorCode {
     // Analysis
     ANALYSIS_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 분석에 실패했습니다."),
     INVALID_IMAGE(HttpStatus.BAD_REQUEST, "유효하지 않은 이미지 파일입니다."),
+    ANALYSIS_RATE_LIMIT_EXCEEDED(HttpStatus.TOO_MANY_REQUESTS, "1시간에 3번까지만 분석할 수 있습니다."),
 
     // Storage
     IMAGE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 업로드에 실패했습니다.");
